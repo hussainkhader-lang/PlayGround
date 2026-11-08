@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101016">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23ffca66'/%3E%3Cpath d='M13 21l38-9-17 43z' fill='%23f58a45' stroke='%23fff0ad' stroke-width='3'/%3E%3Ccircle cx='31' cy='27' r='3' fill='%23d65242'/%3E%3Ccircle cx='39' cy='37' r='3' fill='%23d65242'/%3E%3C/svg%3E">
+<title>Pizza Panic — Slice & Run</title>
+<style>
+:root{color-scheme:dark;--ink:#f7f0e5;--muted:#a19aa0;--gold:#ffca66;--tomato:#ff644e;--panel:#1b1922;--line:#39333c}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#101016;color:var(--ink);font-family:Inter,ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif}body{min-height:100svh;display:grid;place-items:center;padding:24px;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,#302128 0,transparent 58%),#101016}
+button{font:inherit;color:inherit}.shell{width:min(1200px,100%);display:grid;gap:14px}.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 4px}.brand{display:flex;align-items:center;gap:12px}.brand-icon{width:42px;height:42px;border-radius:14px;background:#ffca66;display:grid;place-items:center;font-size:25px;box-shadow:0 4px 20px #ff9a3e33}.brand-title{font-size:15px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.brand-sub{font-size:11px;color:#a19aa0;letter-spacing:.11em;text-transform:uppercase;margin-top:3px}.live-pill{border:1px solid #3b343b;background:#1a171e;border-radius:999px;padding:8px 13px;color:#c9c1c2;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;gap:8px;align-items:center}.live-dot{height:7px;width:7px;border-radius:50%;background:#98e6a9;box-shadow:0 0 10px #98e6a9}
+.game-frame{position:relative;border:1px solid #403943;border-radius:22px;overflow:hidden;background:#17171d;box-shadow:0 30px 90px #0008,0 0 0 7px #ffffff04}.hud{height:72px;background:#1b1922;border-bottom:1px solid #39333c;padding:0 22px;display:flex;align-items:center;gap:24px;position:relative;z-index:2}.hud-label{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#9e969f;font-weight:800}.hud-value{font-size:18px;font-weight:900;letter-spacing:.03em;margin-top:3px;font-variant-numeric:tabular-nums}.stat{min-width:78px}.hud-divider{width:1px;height:30px;background:#38333d}.hearts{color:#ff735d;letter-spacing:4px;font-size:19px;white-space:nowrap;margin-top:2px}.progress-wrap{flex:1;max-width:250px}.progress-copy{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.progress-copy .hud-value{font-size:12px;margin:0;color:#f5e8d0}.progress-track{height:7px;background:#34303a;border-radius:99px;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#ff994d,#ffda72);border-radius:99px;transition:width .25s}.hud-spacer{flex:1}.sound-btn{width:38px;height:38px;border:1px solid #403943;background:#24212a;border-radius:12px;cursor:pointer;font-size:16px;transition:.2s}.sound-btn:hover{border-color:#ffca66;transform:translateY(-1px)}
+.stage{position:relative;width:100%;aspect-ratio:960/600;background:#242329;overflow:hidden;touch-action:none}.stage canvas{display:block;width:100%;height:100%}.overlay{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:linear-gradient(90deg,#131219de,#17131acc);transition:opacity .25s}.overlay.hidden{opacity:0;pointer-events:none}.modal{width:min(460px,calc(100% - 32px));text-align:center;padding:30px 30px 27px;background:#201d25eF;border:1px solid #4a3d3d;border-radius:24px;box-shadow:0 20px 70px #0009;backdrop-filter:blur(10px)}.eyebrow{display:inline-flex;align-items:center;gap:7px;color:#ffca66;font-size:10px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}.modal h1{font-size:clamp(34px,6vw,52px);line-height:.98;letter-spacing:-.06em;margin:12px 0 12px}.modal h1 span{color:#ff775e}.modal p{font-size:14px;line-height:1.55;color:#c1b8bd;margin:0 auto 20px;max-width:350px}.chips{display:flex;justify-content:center;gap:8px;margin:0 0 22px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:99px;background:#302a31;border:1px solid #494049;color:#e6dcd5;font-size:10px;font-weight:800;letter-spacing:.04em}.chip b{color:#ffca66}.primary-btn{border:0;border-radius:13px;background:#ffca66;color:#241714;font-size:13px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase;padding:14px 23px;min-width:190px;cursor:pointer;box-shadow:0 5px 0 #c87b3e,0 12px 26px #ff9a3e24;transition:transform .12s,filter .12s}.primary-btn:hover{filter:brightness(1.07);transform:translateY(-2px)}.primary-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #c87b3e}.small-note{font-size:10px;color:#958c94;margin-top:16px;letter-spacing:.06em}.bottomline{display:flex;justify-content:space-between;align-items:center;padding:0 4px;color:#918990;font-size:11px}.bottomline strong{color:#c4b8ad}.key{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 5px;border-radius:6px;border:1px solid #49424a;background:#211e25;color:#e3d9d4;font-size:10px;font-weight:800;margin:0 2px}.touch-pad{display:none;position:absolute;z-index:2;bottom:12px;left:12px;gap:4px;grid-template-columns:repeat(3,38px);grid-template-rows:repeat(2,34px);opacity:.78}.overlay:not(.hidden) ~ .touch-pad{display:none!important}.touch-pad button{border:1px solid #ffffff3b;background:#1b1922bb;border-radius:9px;font-size:15px;touch-action:none}.touch-pad [data-dir=up]{grid-column:2}.touch-pad [data-dir=left]{grid-column:1;grid-row:2}.touch-pad [data-dir=down]{grid-column:2;grid-row:2}.touch-pad [data-dir=right]{grid-column:3;grid-row:2}.touch-dash{display:none;position:absolute;z-index:2;right:14px;bottom:16px;width:62px;height:62px;border:1px solid #ffdc8c88;border-radius:50%;background:#ffca66e8;color:#281a17;font-size:24px;font-weight:1000;box-shadow:0 4px 0 #c87b3e,0 8px 20px #0006;touch-action:none}.touch-dash span{display:block;font-size:8px;letter-spacing:.1em;text-transform:uppercase;margin-top:-2px}.overlay:not(.hidden) ~ .touch-dash{display:none!important}.mobile-hint{display:none}
+@media(max-width:700px){body{padding:12px;place-items:start center}.shell{gap:10px}.topbar{padding:0 2px}.brand-icon{width:36px;height:36px;border-radius:12px;font-size:21px}.brand-title{font-size:13px}.brand-sub{font-size:9px}.live-pill{font-size:9px;padding:7px 9px}.game-frame{border-radius:16px}.hud{height:60px;padding:0 12px;gap:12px}.hud-label{font-size:8px}.hud-value{font-size:15px}.stat{min-width:48px}.hud-divider{height:26px}.hearts{font-size:15px;letter-spacing:2px}.progress-wrap{max-width:130px}.progress-copy .hud-value{font-size:10px}.sound-btn{width:32px;height:32px}.stage{aspect-ratio:1.12/1}.touch-pad{display:grid}.touch-dash{display:block}.bottomline{font-size:9px}.desktop-hint{display:none}.mobile-hint{display:block}.modal{padding:18px 17px}.modal h1{font-size:37px;margin:8px 0}.modal p{font-size:11px;line-height:1.4;margin-bottom:12px}.chips{margin-bottom:14px}.small-note{margin-top:11px}}
+@media(max-width:390px){.hud{gap:8px;padding:0 8px}.stat{min-width:42px}.hud-divider{display:none}.progress-wrap{max-width:104px}.hearts{letter-spacing:1px;font-size:13px}.live-pill{gap:5px}.brand{gap:8px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar"><div class="brand"><div class="brand-icon">🍕</div><div><div class="brand-title">Pizza Panic</div><div class="brand-sub">Midnight delivery gone wrong</div></div></div><div class="live-pill"><span class="live-dot"></span> Arcade mode</div></header>
+  <section class="game-frame" aria-label="Pizza Panic game">
+    <div class="hud">
+      <div class="stat"><div class="hud-label">Score</div><div class="hud-value" id="score">0000</div></div><div class="hud-divider"></div>
+      <div class="stat"><div class="hud-label">Lives</div><div class="hearts" id="lives">♥ ♥ ♥</div></div><div class="hud-divider"></div>
+      <div class="progress-wrap"><div class="progress-copy"><span class="hud-label">Slices</span><span class="hud-value"><span id="sliceCount">0</span> / 8</span></div><div class="progress-track"><div class="progress-fill" id="progress"></div></div></div>
+      <div class="hud-spacer"></div><div class="stat"><div class="hud-label">Time</div><div class="hud-value" id="timer">60</div></div><button class="sound-btn" id="soundBtn" aria-label="Toggle sound">♪</button>
+    </div>
+    <div class="stage" id="stage"><canvas id="game" aria-label="Maze game"></canvas>
+      <div class="overlay" id="overlay"><div class="modal"><div class="eyebrow"><span>✦</span> The walls won't save you <span>✦</span></div><h1 id="headline">Pizza<br><span>Panic!</span></h1><p id="message">The sentient slice is hungry. Grab 8 golden toppings and get out before it catches you!</p><div class="chips"><span class="chip"><b>WASD</b> / <b>← ↑ ↓ →</b> move</span><span class="chip"><b>SPACE</b> dash</span></div><button class="primary-btn" id="startBtn">Start running</button><div class="small-note">Beware: it phases right through the walls.</div></div></div>
+      <div class="touch-pad" aria-label="Touch movement controls"><button data-dir="up" aria-label="Move up">▲</button><button data-dir="left" aria-label="Move left">◀</button><button data-dir="down" aria-label="Move down">▼</button><button data-dir="right" aria-label="Move right">▶</button></div>
+      <button class="touch-dash" id="touchDash" aria-label="Dash">⚡<span>dash</span></button>
+    </div>
+  </section>
+  <footer class="bottomline"><span class="desktop-hint"><strong>MOVE</strong> <span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span> or arrows &nbsp; <strong>DASH</strong> <span class="key">SPACE</span></span><span class="mobile-hint">Use the pad to move · Tap ⚡ to dash</span><span>Made with <strong>extra cheese</strong> 🧀</span></footer>
+</main>
+<script>
+(() => {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const stage = document.getElementById('stage');
+  const overlay = document.getElementById('overlay');
+  const startBtn = document.getElementById('startBtn');
+  const W = 960, H = 600, TILE = 48, MAP_X = 0, MAP_Y = 12;
+  const mapRows = [
+    '####################',
+    '#....#.......#.....#',
+    '#.##.#.#####.#.###.#',
+    '#.#..#...#...#...#.#',
+    '#.#.###..#..###..#.#',
+    '#...#....#.....#...#',
+    '###.#.######.#.###.#',
+    '#...#....#...#.....#',
+    '#.######.#.#####.#.#',
+    '#........#.......#.#',
+    '#.#########.#####..#',
+    '####################'
+  ];
+  const walls = mapRows.map(row => [...row].map(c => c === '#'));
+  const scoreEl = document.getElementById('score');
+  const livesEl = document.getElementById('lives');
+  const countEl = document.getElementById('sliceCount');
+  const progressEl = document.getElementById('progress');
+  const timerEl = document.getElementById('timer');
+  const headline = document.getElementById('headline');
+  const message = document.getElementById('message');
+  const soundBtn = document.getElementById('soundBtn');
+  let dpr = 1, running = false, won = false, last = 0, elapsed = 0, timeLeft = 60;
+  let score = 0, lives = 3, collected = 0, slices = [], particles = [];
+  let audioOn = false, audioCtx = null, shake = 0, flash = 0;
+  const keys = new Set(), touchDirs = new Set();
+  const player = {x: 1.5*TILE, y: 1.5*TILE, r: 13, speed: 175, dx: 1, dy: 0, dash: 0, dashCd: 0, invuln: 0};
+  const pizza = {x: 18.5*TILE, y: 10.5*TILE, r: 18, speed: 64, angle: 0};
+  const rand = (a,b) => a + Math.random()*(b-a);
+  function resize(){
+    const rect = stage.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rect.width*dpr); canvas.height = Math.round(rect.height*dpr);
+    ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+  }
+  window.addEventListener('resize', resize); resize();
+  function wallAt(px,py){
+    const c=Math.floor((px-MAP_X)/TILE), r=Math.floor((py-MAP_Y)/TILE);
+    return r<0 || c<0 || r>=walls.length || c>=walls[0].length || walls[r][c];
+  }
+  function hitsWall(x,y,r){
+    return wallAt(x-r,y-r)||wallAt(x+r,y-r)||wallAt(x-r,y+r)||wallAt(x+r,y+r)||wallAt(x,y-r)||wallAt(x,y+r)||wallAt(x-r,y)||wallAt(x+r,y);
+  }
+  function movePlayer(dx,dy,dt){
+    const speed = player.speed * (player.dash>0 ? 2.45 : 1);
+    const nx=player.x+dx*speed*dt, ny=player.y+dy*speed*dt;
+    if(!hitsWall(nx,player.y,player.r)) player.x=nx;
+    if(!hitsWall(player.x,ny,player.r)) player.y=ny;
+  }
+  function spawnSlices(){
+    slices=[];
+    let tries=0;
+    while(slices.length<8&&tries++<1000){
+      const c=1+Math.floor(Math.random()*18), r=1+Math.floor(Math.random()*9);
+      if(walls[r][c]) continue;
+      const x=(c+.5)*TILE, y=MAP_Y+(r+.5)*TILE;
+      if(Math.hypot(x-player.x,y-player.y)<100||Math.hypot(x-pizza.x,y-pizza.y)<80) continue;
+      if(slices.some(s=>Math.hypot(s.x-x,s.y-y)<50)) continue;
+      slices.push({x,y,phase:rand(0,6.28),got:false});
+    }
+  }
+  function reset(){
+    score=0;lives=3;collected=0;elapsed=0;timeLeft=60;won=false;shake=0;flash=0;particles=[];
+    Object.assign(player,{x:1.5*TILE,y:1.5*TILE,dx:1,dy:0,dash:0,dashCd:0,invuln:1.3});
+    Object.assign(pizza,{x:18.5*TILE,y:10.5*TILE,speed:64,angle:0});
+    spawnSlices(); updateHud();
+  }
+  function updateHud(){
+    scoreEl.textContent=String(score).padStart(4,'0');
+    livesEl.textContent=Array.from({length:3},(_,i)=>i<lives?'♥':'♡').join(' ');
+    countEl.textContent=collected;progressEl.style.width=(collected/8*100)+'%';timerEl.textContent=Math.max(0,Math.ceil(timeLeft));
+  }
+  function begin(){reset();running=true;overlay.classList.add('hidden');last=performance.now();if(audioOn) initSound();}
+  startBtn.addEventListener('click',begin);
+  const keyMap={ArrowUp:'up',KeyW:'up',ArrowDown:'down',KeyS:'down',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};
+  window.addEventListener('keydown',e=>{
+    if(keyMap[e.code]){keys.add(keyMap[e.code]);e.preventDefault();}
+    if(e.code==='Space'){e.preventDefault();if(!e.repeat) dash();}
+    if((e.code==='Enter'||e.code==='Space')&&!running) begin();
+  });
+  window.addEventListener('keyup',e=>{if(keyMap[e.code])keys.delete(keyMap[e.code]);});
+  function dash(){if(!running||player.dashCd>0)return;player.dash=.19;player.dashCd=1.15;player.invuln=Math.max(player.invuln,.23);sound(430,.08);}
+  document.querySelectorAll('.touch-pad button').forEach(btn=>{
+    const dir=btn.dataset.dir;
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();btn.setPointerCapture(e.pointerId);touchDirs.add(dir);});
+    const release=e=>{e.preventDefault();touchDirs.delete(dir);};
+    btn.addEventListener('pointerup',release);btn.addEventListener('pointercancel',release);btn.addEventListener('lostpointercapture',()=>touchDirs.delete(dir));
+  });
+  stage.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&running&&e.target===canvas)dash();});
+  document.getElementById('touchDash').addEventListener('pointerdown',e=>{e.preventDefault();dash();});
+  soundBtn.addEventListener('click',()=>{audioOn=!audioOn;soundBtn.textContent=audioOn?'♫':'♪';soundBtn.style.color=audioOn?'#ffca66':'';if(audioOn)initSound();});
+  function initSound(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}
+  function sound(freq=520,duration=.09){if(!audioOn)return;initSound();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration);}
+  function burst(x,y,color,n=10){for(let i=0;i<n;i++){const a=rand(0,Math.PI*2),v=rand(35,145);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.35,.8),max:.8,color,size:rand(2,5)});}}
+  function finish(victory){
+    running=false;won=victory;overlay.classList.remove('hidden');
+    if(victory){headline.innerHTML='Slice of<br><span>victory!</span>';message.textContent='You scooped up every topping and left that clingy crust in the dust. The kitchen is yours!';startBtn.textContent='Play again';sound(760,.25);}
+    else{headline.innerHTML='You got<br><span>served!</span>';message.textContent=lives<=0?'That crust caught up with you. The toppings are still out there — give it another go!':'Time ran out! The pizza is still hungry. Try again and keep moving!';startBtn.textContent='Try again';sound(150,.3);}
+  }
+  function update(dt){
+    elapsed+=dt;timeLeft-=dt;player.invuln=Math.max(0,player.invuln-dt);player.dash=Math.max(0,player.dash-dt);player.dashCd=Math.max(0,player.dashCd-dt);shake=Math.max(0,shake-dt*20);flash=Math.max(0,flash-dt*2);
+    if(timeLeft<=0){timeLeft=0;updateHud();finish(false);return;}
+    let dx=(keys.has('right')||touchDirs.has('right')?1:0)-(keys.has('left')||touchDirs.has('left')?1:0);
+    let dy=(keys.has('down')||touchDirs.has('down')?1:0)-(keys.has('up')||touchDirs.has('up')?1:0);
+    const len=Math.hypot(dx,dy);if(len){dx/=len;dy/=len;player.dx=dx;player.dy=dy;movePlayer(dx,dy,dt);}
+    pizza.speed=64+collected*3.1+Math.min(elapsed*.28,12);
+    const toX=player.x-pizza.x,toY=player.y-pizza.y,dist=Math.hypot(toX,toY)||1;
+    pizza.x+=toX/dist*pizza.speed*dt;pizza.y+=toY/dist*pizza.speed*dt;pizza.angle+=dt*(2.5+collected*.1);
+    for(const s of slices){if(!s.got&&Math.hypot(player.x-s.x,player.y-s.y)<player.r+13){s.got=true;collected++;score+=100;burst(s.x,s.y,'#ffcb64',12);sound(620+collected*38,.11);flash=.15;}}
+    if(collected>=8){score+=Math.ceil(timeLeft)*10;updateHud();finish(true);return;}
+    if(player.invuln<=0&&Math.hypot(player.x-pizza.x,player.y-pizza.y)<player.r+pizza.r-3){
+      lives--;player.invuln=1.8;shake=9;flash=.4;score=Math.max(0,score-50);burst(player.x,player.y,'#ff715d',18);sound(180,.2);
+      if(lives<=0){updateHud();finish(false);return;}
+      // A quick respawn buys a moment, but the relentless slice keeps coming.
+      player.x=1.5*TILE;player.y=1.5*TILE;
+    }
+    for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.pow(.1,dt);p.vy*=Math.pow(.1,dt);p.life-=dt;}
+    particles=particles.filter(p=>p.life>0);updateHud();
+  }
+  function roundedRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
+  function drawBackground(){
+    ctx.fillStyle='#242329';ctx.fillRect(0,0,W,H);
+    // subtle checkerboard floor and warm pools of light
+    for(let r=0;r<12;r++)for(let c=0;c<20;c++){
+      const x=c*TILE,y=MAP_Y+r*TILE;
+      if(!walls[r][c]){ctx.fillStyle=(r+c)%2?'#29282e':'#2b2a30';ctx.fillRect(x,y,TILE,TILE);ctx.fillStyle='#ffffff04';ctx.fillRect(x+5,y+5,1,1);}
+    }
+    const glow=ctx.createRadialGradient(player.x,player.y,20,player.x,player.y,300);glow.addColorStop(0,'#ffca660c');glow.addColorStop(1,'#ffca6600');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+  }
+  function drawWalls(){
+    for(let r=0;r<12;r++)for(let c=0;c<20;c++)if(walls[r][c]){
+      const x=c*TILE,y=MAP_Y+r*TILE;
+      ctx.fillStyle='#14141a';ctx.fillRect(x,y,TILE,TILE);
+      ctx.fillStyle='#34323a';roundedRect(x+2,y+2,TILE-4,TILE-4,8);ctx.fill();
+      ctx.fillStyle='#403d45';roundedRect(x+5,y+5,TILE-10,5,3);ctx.fill();
+      ctx.fillStyle='#27262d';ctx.fillRect(x+5,y+13,TILE-10,TILE-18);
+      // tiny tile seams create a hand-laid kitchen-brick feel
+      ctx.fillStyle='#ffffff08';ctx.fillRect(x+8,y+22,TILE-16,1);
+      ctx.strokeStyle='#514a4d';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+7,y+TILE-4);ctx.lineTo(x+TILE-7,y+TILE-4);ctx.stroke();
+    }
+    // little route markers in the floor
+    ctx.save();ctx.globalAlpha=.22;ctx.fillStyle='#ffcb6b';
+    [[1.5,1.5],[18.5,10.5]].forEach(([c,r])=>{ctx.beginPath();ctx.arc(c*TILE,MAP_Y+r*TILE,3,0,Math.PI*2);ctx.fill();});ctx.restore();
+  }
+  function drawSlice(s){
+    const bob=Math.sin(elapsed*4+s.phase)*3, x=s.x,y=s.y+bob;
+    ctx.save();ctx.translate(x,y);ctx.rotate(.1*Math.sin(elapsed*2+s.phase));
+    ctx.shadowColor='#ffca66';ctx.shadowBlur=16;ctx.fillStyle='#ffd978';
+    ctx.beginPath();ctx.moveTo(-11,-9);ctx.lineTo(12,-5);ctx.lineTo(3,12);ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle='#fff0ad';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#f58a45';
+    [[-2,-3],[5,-2],[2,4]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(a,b,1.7,0,Math.PI*2);ctx.fill();});
+    ctx.restore();
+  }
+  function drawPizza(){
+    const bob=Math.sin(elapsed*8)*2;
+    ctx.save();ctx.translate(pizza.x,pizza.y+bob);ctx.rotate(pizza.angle*.16);
+    ctx.shadowColor='#ff553d';ctx.shadowBlur=24;ctx.fillStyle='#ba583c';ctx.beginPath();ctx.arc(0,0,21,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='#f4bf57';ctx.beginPath();ctx.arc(0,0,17,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#ffe18c';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,14.5,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#d65242';[[0,-9],[-8,2],[8,3],[-3,9]].forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();});
+    // furious eyes and a wobbly villain grin
+    ctx.strokeStyle='#49302d';ctx.lineWidth=2.3;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(-9,-7);ctx.lineTo(-3,-5);ctx.moveTo(3,-5);ctx.lineTo(9,-7);ctx.stroke();
+    ctx.fillStyle='#28222a';ctx.beginPath();ctx.arc(-6,-3,1.8,0,Math.PI*2);ctx.arc(6,-3,1.8,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(0,3,6,.22,Math.PI-.22);ctx.stroke();
+    ctx.restore();
+  }
+  function drawPlayer(){
+    const flicker=player.invuln>0&&Math.floor(elapsed*13)%2===0;
+    if(flicker)ctx.globalAlpha=.38;
+    const bob=Math.sin(elapsed*11)*1.5;
+    ctx.save();ctx.translate(player.x,player.y+bob);
+    if(player.dash>0){ctx.strokeStyle='#ffe8a6';ctx.globalAlpha=.45;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-player.dx*28,-player.dy*28);ctx.lineTo(-player.dx*8,-player.dy*8);ctx.stroke();ctx.globalAlpha=1;}
+    ctx.shadowColor='#82d5d0';ctx.shadowBlur=15;ctx.fillStyle='#54aaa7';ctx.beginPath();ctx.arc(0,2,14,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='#f2d5ae';ctx.beginPath();ctx.arc(0,-2,10.5,0,Math.PI*2);ctx.fill();
+    // tiny chef cap
+    ctx.fillStyle='#fff5df';roundedRect(-10,-14,20,7,3);ctx.fill();ctx.beginPath();ctx.arc(-4,-14,4,0,Math.PI*2);ctx.arc(3,-15,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#3c3438';ctx.beginPath();ctx.arc(-3,-2,1.2,0,Math.PI*2);ctx.arc(4,-2,1.2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#a65347';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(1,1,3,.2,Math.PI-.2);ctx.stroke();
+    ctx.fillStyle='#ffca66';ctx.beginPath();ctx.arc(-12,10,3,0,Math.PI*2);ctx.fill();
+    ctx.restore();ctx.globalAlpha=1;
+  }
+  function draw(){
+    ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+    ctx.clearRect(0,0,W,H);
+    if(shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));
+    drawBackground();drawWalls();
+    for(const s of slices)if(!s.got)drawSlice(s);
+    // directional danger halo remains visible even when the pursuer slips behind a wall.
+    const grad=ctx.createRadialGradient(pizza.x,pizza.y,18,pizza.x,pizza.y,85);grad.addColorStop(0,'#ff553d1a');grad.addColorStop(1,'#ff553d00');ctx.fillStyle=grad;ctx.fillRect(pizza.x-90,pizza.y-90,180,180);
+    drawPizza();drawPlayer();
+    for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
+    if(flash>0){ctx.fillStyle=`rgba(255,83,60,${flash*.22})`;ctx.fillRect(0,0,W,H);}
+    ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+  }
+  function frame(now){
+    const dt=Math.min(.04,(now-last)/1000||0);last=now;
+    if(running)update(dt);draw();requestAnimationFrame(frame);
+  }
+  reset();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
