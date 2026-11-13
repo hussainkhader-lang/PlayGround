@@ -108,8 +108,37 @@ for (const button of document.querySelectorAll('[data-key]')) {
   const k = button.dataset.key;
   const down = e => { e.preventDefault(); if (k === 'space') jumpQueued = true; else { keys.add(k); if (k === 'w') jumpQueued = true; } };
   const up = e => { e.preventDefault(); if (k !== 'space') keys.delete(k); };
-  button.addEventListener('pointerdown', down); button.addEventListener('pointerup', up); button.addEventListener('pointercancel', up);
+  button.addEventListener('pointerdown', down); button.addEventListener('pointerup', up); button.addEventListener('pointercancel', up); button.addEventListener('lostpointercapture', up);
 }
+
+const joystick = document.querySelector('#joystick'), joystickKnob = document.querySelector('#joystick-knob');
+let joystickPointer = null;
+function updateJoystick(e) {
+  const rect = joystick.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2, centerY = rect.top + rect.width / 2;
+  const maxRadius = rect.width * .32;
+  let dx = e.clientX - centerX, dy = e.clientY - centerY;
+  const length = Math.hypot(dx, dy);
+  if (length > maxRadius) { dx = dx / length * maxRadius; dy = dy / length * maxRadius; }
+  joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+  const nx = dx / maxRadius, ny = dy / maxRadius;
+  keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
+  if (nx < -.22) keys.add('a'); if (nx > .22) keys.add('d');
+  if (ny < -.22) keys.add('w'); if (ny > .22) keys.add('s');
+}
+function releaseJoystick(e) {
+  if (e.pointerId !== joystickPointer) return;
+  joystickPointer = null; keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
+  joystickKnob.style.transform = 'translate(0, 0)';
+  if (joystick.hasPointerCapture(e.pointerId)) joystick.releasePointerCapture(e.pointerId);
+}
+joystick.addEventListener('pointerdown', e => {
+  e.preventDefault(); joystickPointer = e.pointerId; joystick.setPointerCapture(e.pointerId); updateJoystick(e);
+});
+joystick.addEventListener('pointermove', e => { if (e.pointerId === joystickPointer) updateJoystick(e); });
+joystick.addEventListener('pointerup', releaseJoystick);
+joystick.addEventListener('pointercancel', releaseJoystick);
+joystick.addEventListener('lostpointercapture', releaseJoystick);
 const $ = s => document.querySelector(s);
 const toast = text => { const el = $('#toast'); el.textContent = text; el.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('show'), 2200); };
 function playTone(freq = 700, duration = .12) {
