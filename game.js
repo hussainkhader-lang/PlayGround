@@ -106,34 +106,44 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 for (const button of document.querySelectorAll('[data-key]')) {
   const k = button.dataset.key;
-  const down = e => { e.preventDefault(); if (k === 'space') jumpQueued = true; else { keys.add(k); if (k === 'w') jumpQueued = true; } };
-  const up = e => { e.preventDefault(); if (k !== 'space') keys.delete(k); };
+  const down = e => {
+    e.preventDefault();
+    if (button.setPointerCapture) button.setPointerCapture(e.pointerId);
+    button.classList.add('pressed'); button.setAttribute('aria-pressed', 'true');
+    if (k === 'space') jumpQueued = true; else { keys.add(k); if (k === 'w') jumpQueued = true; }
+  };
+  const up = e => {
+    e.preventDefault(); button.classList.remove('pressed'); button.setAttribute('aria-pressed', 'false');
+    if (k !== 'space') keys.delete(k);
+    if (button.hasPointerCapture?.(e.pointerId)) button.releasePointerCapture(e.pointerId);
+  };
   button.addEventListener('pointerdown', down); button.addEventListener('pointerup', up); button.addEventListener('pointercancel', up); button.addEventListener('lostpointercapture', up);
 }
 
 const joystick = document.querySelector('#joystick'), joystickKnob = document.querySelector('#joystick-knob');
-let joystickPointer = null;
+let joystickPointer = null, joystickMoveX = 0, joystickMoveY = 0;
 function updateJoystick(e) {
   const rect = joystick.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2, centerY = rect.top + rect.width / 2;
-  const maxRadius = rect.width * .32;
+  const centerX = rect.left + rect.width / 2, centerY = rect.top + rect.height / 2;
+  const maxRadius = Math.min(rect.width, rect.height) * .32;
   let dx = e.clientX - centerX, dy = e.clientY - centerY;
   const length = Math.hypot(dx, dy);
   if (length > maxRadius) { dx = dx / length * maxRadius; dy = dy / length * maxRadius; }
   joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-  const nx = dx / maxRadius, ny = dy / maxRadius;
-  keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
-  if (nx < -.22) keys.add('a'); if (nx > .22) keys.add('d');
-  if (ny < -.22) keys.add('w'); if (ny > .22) keys.add('s');
+  let nx = dx / maxRadius, ny = dy / maxRadius;
+  const magnitude = Math.hypot(nx, ny);
+  if (magnitude < .12) nx = ny = 0;
+  else if (magnitude > 1) { nx /= magnitude; ny /= magnitude; }
+  joystickMoveX = nx; joystickMoveY = ny;
 }
 function releaseJoystick(e) {
   if (e.pointerId !== joystickPointer) return;
-  joystickPointer = null; keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
-  joystickKnob.style.transform = 'translate(0, 0)';
+  joystickPointer = null; joystickMoveX = joystickMoveY = 0;
+  joystick.classList.remove('active'); joystickKnob.style.transform = 'translate(0, 0)';
   if (joystick.hasPointerCapture(e.pointerId)) joystick.releasePointerCapture(e.pointerId);
 }
 joystick.addEventListener('pointerdown', e => {
-  e.preventDefault(); joystickPointer = e.pointerId; joystick.setPointerCapture(e.pointerId); updateJoystick(e);
+  e.preventDefault(); joystickPointer = e.pointerId; joystick.classList.add('active'); joystick.setPointerCapture(e.pointerId); updateJoystick(e);
 });
 joystick.addEventListener('pointermove', e => { if (e.pointerId === joystickPointer) updateJoystick(e); });
 joystick.addEventListener('pointerup', releaseJoystick);
@@ -256,9 +266,10 @@ function movePlayer(dt) {
   const forward = keys.has('w') || keys.has('arrowup');
   const backward = keys.has('s') || keys.has('arrowdown');
   const left = keys.has('a') || keys.has('arrowleft'), right = keys.has('d') || keys.has('arrowright');
-  let mx = (right ? 1 : 0) - (left ? 1 : 0);
-  let mz = (forward ? -1 : 0) + (backward ? 1 : 0);
-  const length = Math.hypot(mx, mz) || 1; mx /= length; mz /= length;
+  let mx = (right ? 1 : 0) - (left ? 1 : 0) + joystickMoveX;
+  let mz = (forward ? -1 : 0) + (backward ? 1 : 0) + joystickMoveY;
+  const length = Math.hypot(mx, mz);
+  if (length > 1) { mx /= length; mz /= length; }
   const speed = 7.3;
   player.vel.x = mx * speed;
   player.vel.z = mz * speed;
@@ -350,6 +361,10 @@ function resize() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8)); renderer.setSize(innerWidth, innerHeight);
 }
 addEventListener('resize', resize);
-addEventListener('blur', () => { keys.clear(); jumpQueued = false; });
+addEventListener('blur', () => {
+  keys.clear(); jumpQueued = false; joystickPointer = null; joystickMoveX = joystickMoveY = 0;
+  joystick.classList.remove('active'); joystickKnob.style.transform = 'translate(0, 0)';
+  document.querySelectorAll('[data-key]').forEach(button => { button.classList.remove('pressed'); button.setAttribute('aria-pressed', 'false'); });
+});
 updateHud(); updatePlayerCount(); updateCamera(1); requestAnimationFrame(animate);
 

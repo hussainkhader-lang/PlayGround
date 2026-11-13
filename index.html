@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="touch-controls.css" />
 </head>
 <body>
   <main class="game-shell">
@@ -36,9 +37,9 @@
     <div class="danger-banner" id="danger-banner"><span class="danger-icon">◉</span><div><b>IT SEES YOU</b><small>Keep moving!</small></div><div class="danger-pulse"></div></div>
     <div class="toast" id="toast"></div>
     <div class="controls-hint"><span class="keycap">W</span><span class="keycap-row"><span class="keycap">A</span><span class="keycap">S</span><span class="keycap">D</span></span><span class="hint-text">MOVE</span><span class="hint-divider"></span><span class="keycap wide">SPACE</span><span class="hint-text">JUMP</span></div>
-    <div class="touch-controls" aria-label="Touch controls"><div class="joystick" id="joystick" role="application" aria-label="Movement joystick"><div class="joystick-ring"><div class="joystick-knob" id="joystick-knob"></div></div><span class="joystick-hint">MOVE</span></div><button class="jump-touch" data-key="space" aria-label="Jump">JUMP <span>↗</span></button></div>
+    <div class="touch-controls" aria-label="Touch controls"><div class="joystick" id="joystick" role="application" aria-label="Movement joystick"><div class="joystick-ring"><div class="joystick-knob" id="joystick-knob"></div></div><span class="joystick-hint">MOVE</span></div><button class="jump-touch" data-key="space" aria-label="Jump" aria-pressed="false">JUMP <span>↗</span></button></div>
     <div class="join-modal" id="join-modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" id="modal-close">×</button><span class="modal-icon">✦</span><div class="eyebrow">BRING YOUR CREW</div><h2>Same sky.<br><span>More chances.</span></h2><p>Host a world for your friends, or enter their room code to jump in. Everyone spawns right into the run.</p><label for="room-input">ROOM CODE</label><div class="input-row"><input id="room-input" maxlength="12" value="SKY-01" autocomplete="off"/><button id="connect-btn">JOIN WORLD <span>↗</span></button></div><small class="modal-note">Multiplayer uses a peer-to-peer connection. Share your room code.</small></div></div>
-    <div class="help-modal" id="help-modal" aria-hidden="true"><div class="modal-card help-card"><button class="modal-close" id="help-close">×</button><span class="modal-icon">⌁</span><div class="eyebrow">FIELD NOTES</div><h2>Make it to<br><span>the other side.</span></h2><ul><li><b>Move</b><span>WASD or arrow keys</span></li><li><b>Jump</b><span>Space, W, or tap JUMP</span></li><li><b>Stardust</b><span>Collect the glowing stars on your way</span></li><li><b>The ID</b><span>It ignores walls. It does not ignore you.</span></li></ul><button class="got-it" id="got-it">GOT IT <span>↗</span></button></div></div>
+    <div class="help-modal" id="help-modal" aria-hidden="true"><div class="modal-card help-card"><button class="modal-close" id="help-close">×</button><span class="modal-icon">⌁</span><div class="eyebrow">FIELD NOTES</div><h2>Make it to<br><span>the other side.</span></h2><ul><li><b>Move</b><span>Joystick, WASD, or arrow keys</span></li><li><b>Jump</b><span>Touch JUMP, Space, or W</span></li><li><b>Stardust</b><span>Collect the glowing stars on your way</span></li><li><b>The ID</b><span>It ignores walls. It does not ignore you.</span></li></ul><button class="got-it" id="got-it">GOT IT <span>↗</span></button></div></div>
     <div class="status-message" id="status-message" aria-live="polite"></div>
   </main>
   <script type="module" src="game.js"></script>

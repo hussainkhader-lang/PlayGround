@@ -1,0 +1,40 @@
+/* Touch-first controls: remain available on phones and larger touch tablets. */
+@media (pointer: coarse) {
+  .touch-controls { display: flex; }
+  .controls-hint { display: none; }
+}
+.touch-controls {
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  padding-left: max(18px, env(safe-area-inset-left));
+  padding-right: max(18px, env(safe-area-inset-right));
+}
+.touch-controls, .touch-controls * {
+  -webkit-tap-highlight-color: transparent;
+}
+.joystick, .jump-touch { touch-action: none; }
+.joystick.active .joystick-ring {
+  border-color: #a3f4e580;
+  box-shadow: inset 0 0 22px #9df2e31c, 0 0 22px #77efdb24;
+}
+.jump-touch {
+  width: 78px;
+  height: 78px;
+  border-width: 2px;
+  font-weight: 600;
+  transition: transform .08s, background .08s, box-shadow .08s;
+}
+.jump-touch.pressed {
+  transform: scale(.94);
+  background: #77efdb70;
+  box-shadow: 0 0 30px #77efdb55;
+}
+@media (max-width: 540px) {
+  .session-card { top: 320px; bottom: auto; right: 12px; }
+}
+@media (max-width: 380px) {
+  .session-card { top: 320px; width: 148px; }
+}
+@media (max-height: 570px) and (max-width: 540px) {
+  .session-card { top: 300px; padding: 8px 10px; }
+  .session-buttons { margin-top: 6px; }
+}
