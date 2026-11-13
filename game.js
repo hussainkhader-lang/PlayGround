@@ -96,7 +96,17 @@ const beaconRing = new THREE.Mesh(new THREE.TorusGeometry(1.15, .055, 9, 56), ne
 goal.add(new THREE.PointLight('#9cf6dd', 11, 15)).position.y = 2.5;
 
 const keys = new Set();
-let jumpQueued = false, audioOn = false, audioContext;
+let jumpQueued = false, audioOn = false, audioContext, musicGain, musicTimer = null;
+let musicStep = 0, nextMusicTime = 0;
+const musicTempo = 92, stepDuration = 60 / musicTempo / 2;
+const musicChords = [
+  { root: 130.81, chord: [261.63, 329.63, 392.00] }, // C
+  { root: 110.00, chord: [220.00, 261.63, 329.63] }, // A minor
+  { root: 174.61, chord: [261.63, 349.23, 440.00] }, // F
+  { root: 196.00, chord: [246.94, 293.66, 392.00] }  // G
+];
+const melody = [523.25, 0, 587.33, 659.25, 0, 783.99, 659.25, 587.33, 523.25, 0, 392.00, 523.25, 0, 587.33, 659.25, 0,
+  440.00, 0, 523.25, 587.33, 0, 659.25, 587.33, 523.25, 440.00, 0, 392.00, 440.00, 0, 523.25, 587.33, 0];
 addEventListener('keydown', e => {
   const k = e.key.toLowerCase();
   if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
@@ -145,11 +155,66 @@ joystick.addEventListener('pointercancel', releaseJoystick);
 joystick.addEventListener('lostpointercapture', releaseJoystick);
 const $ = s => document.querySelector(s);
 const toast = text => { const el = $('#toast'); el.textContent = text; el.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('show'), 2200); };
+function ensureAudio() {
+  audioContext ||= new AudioContext();
+  if (!musicGain) {
+    musicGain = audioContext.createGain();
+    musicGain.gain.value = .42;
+    musicGain.connect(audioContext.destination);
+  }
+  if (audioContext.state === 'suspended') audioContext.resume();
+}
+function scheduleMusicNote(freq, time, duration, volume, type = 'sine') {
+  const osc = audioContext.createOscillator(), gain = audioContext.createGain();
+  osc.type = type; osc.frequency.setValueAtTime(freq, time);
+  gain.gain.setValueAtTime(.0001, time);
+  gain.gain.exponentialRampToValueAtTime(volume, time + .035);
+  gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
+  osc.connect(gain); gain.connect(musicGain);
+  osc.start(time); osc.stop(time + duration + .03);
+}
+function scheduleMusic() {
+  if (!audioOn || !audioContext) return;
+  const horizon = audioContext.currentTime + .12;
+  while (nextMusicTime < horizon) {
+    const step = musicStep % 32, chord = musicChords[Math.floor(step / 8)];
+    if (step % 8 === 0) {
+      scheduleMusicNote(chord.root, nextMusicTime, stepDuration * 3.8, .045, 'sine');
+      chord.chord.forEach((freq, i) => scheduleMusicNote(freq, nextMusicTime, stepDuration * 7.5, .012 - i * .001, 'triangle'));
+    }
+    if (melody[step]) scheduleMusicNote(melody[step], nextMusicTime, stepDuration * .82, .038, 'sine');
+    musicStep++; nextMusicTime += stepDuration;
+  }
+}
+function startMusic() {
+  ensureAudio();
+  musicGain.gain.cancelScheduledValues(audioContext.currentTime);
+  musicGain.gain.setTargetAtTime(.42, audioContext.currentTime, .12);
+  nextMusicTime = audioContext.currentTime + .08;
+  musicTimer = setInterval(scheduleMusic, 35);
+}
+function stopMusic() {
+  if (musicTimer) clearInterval(musicTimer);
+  musicTimer = null;
+  if (musicGain && audioContext) {
+    musicGain.gain.cancelScheduledValues(audioContext.currentTime);
+    musicGain.gain.setTargetAtTime(0, audioContext.currentTime, .08);
+  }
+}
 function playTone(freq = 700, duration = .12) {
   if (!audioOn) return;
-  try { audioContext ||= new AudioContext(); const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.frequency.value = freq; osc.type = 'sine'; gain.gain.setValueAtTime(.055, audioContext.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration); osc.connect(gain); gain.connect(audioContext.destination); osc.start(); osc.stop(audioContext.currentTime + duration); } catch {}
+  try { ensureAudio(); const osc = audioContext.createOscillator(), gain = audioContext.createGain(); osc.frequency.value = freq; osc.type = 'sine'; gain.gain.setValueAtTime(.055, audioContext.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audioContext.currentTime + duration); osc.connect(gain); gain.connect(audioContext.destination); osc.start(); osc.stop(audioContext.currentTime + duration); } catch {}
 }
-$('#sound-btn').addEventListener('click', () => { audioOn = !audioOn; $('#sound-btn').textContent = audioOn ? '♫' : '♪'; toast(audioOn ? 'SOUND ON' : 'SOUND OFF'); playTone(680); });
+$('#sound-btn').addEventListener('click', () => {
+  audioOn = !audioOn;
+  $('#sound-btn').textContent = audioOn ? '♫' : '♪';
+  $('#sound-btn').title = audioOn ? 'Turn music off' : 'Turn music on';
+  $('#sound-btn').setAttribute('aria-label', audioOn ? 'Turn music off' : 'Turn music on');
+  $('#sound-btn').setAttribute('aria-pressed', String(audioOn));
+  if (audioOn) startMusic(); else stopMusic();
+  toast(audioOn ? 'CLOUDLINE MUSIC ON' : 'MUSIC OFF');
+  playTone(680);
+});
 $('#help-btn').addEventListener('click', () => $('#help-modal').classList.add('open'));
 $('#help-close').addEventListener('click', () => $('#help-modal').classList.remove('open'));
 $('#got-it').addEventListener('click', () => $('#help-modal').classList.remove('open'));
