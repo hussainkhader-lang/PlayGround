@@ -113,27 +113,31 @@ for (const button of document.querySelectorAll('[data-key]')) {
 
 const joystick = document.querySelector('#joystick'), joystickKnob = document.querySelector('#joystick-knob');
 let joystickPointer = null;
+const joystickInput = { x: 0, z: 0 };
 function updateJoystick(e) {
   const rect = joystick.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2, centerY = rect.top + rect.width / 2;
-  const maxRadius = rect.width * .32;
+  const centerX = rect.left + rect.width / 2, centerY = rect.top + rect.height / 2;
+  const maxRadius = Math.min(rect.width, rect.height) * .32;
   let dx = e.clientX - centerX, dy = e.clientY - centerY;
   const length = Math.hypot(dx, dy);
   if (length > maxRadius) { dx = dx / length * maxRadius; dy = dy / length * maxRadius; }
   joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-  const nx = dx / maxRadius, ny = dy / maxRadius;
-  keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
-  if (nx < -.22) keys.add('a'); if (nx > .22) keys.add('d');
-  if (ny < -.22) keys.add('w'); if (ny > .22) keys.add('s');
+  // Keep a small dead zone, then scale smoothly so small thumb movements still feel precise.
+  const magnitude = Math.hypot(dx, dy) / maxRadius;
+  const strength = magnitude < .12 ? 0 : (magnitude - .12) / .88;
+  joystickInput.x = magnitude ? dx / maxRadius / magnitude * strength : 0;
+  joystickInput.z = magnitude ? dy / maxRadius / magnitude * strength : 0;
 }
 function releaseJoystick(e) {
   if (e.pointerId !== joystickPointer) return;
-  joystickPointer = null; keys.delete('a'); keys.delete('d'); keys.delete('w'); keys.delete('s');
+  joystickPointer = null; joystickInput.x = 0; joystickInput.z = 0;
   joystickKnob.style.transform = 'translate(0, 0)';
   if (joystick.hasPointerCapture(e.pointerId)) joystick.releasePointerCapture(e.pointerId);
 }
 joystick.addEventListener('pointerdown', e => {
-  e.preventDefault(); joystickPointer = e.pointerId; joystick.setPointerCapture(e.pointerId); updateJoystick(e);
+  e.preventDefault();
+  if (joystickPointer !== null) return;
+  joystickPointer = e.pointerId; joystick.setPointerCapture(e.pointerId); updateJoystick(e);
 });
 joystick.addEventListener('pointermove', e => { if (e.pointerId === joystickPointer) updateJoystick(e); });
 joystick.addEventListener('pointerup', releaseJoystick);
@@ -256,13 +260,14 @@ function movePlayer(dt) {
   const forward = keys.has('w') || keys.has('arrowup');
   const backward = keys.has('s') || keys.has('arrowdown');
   const left = keys.has('a') || keys.has('arrowleft'), right = keys.has('d') || keys.has('arrowright');
-  let mx = (right ? 1 : 0) - (left ? 1 : 0);
-  let mz = (forward ? -1 : 0) + (backward ? 1 : 0);
-  const length = Math.hypot(mx, mz) || 1; mx /= length; mz /= length;
+  let mx = (right ? 1 : 0) - (left ? 1 : 0) + joystickInput.x;
+  let mz = (forward ? -1 : 0) + (backward ? 1 : 0) + joystickInput.z;
+  const length = Math.hypot(mx, mz);
+  if (length > 1) { mx /= length; mz /= length; }
   const speed = 7.3;
   player.vel.x = mx * speed;
   player.vel.z = mz * speed;
-  if (Math.abs(mx) + Math.abs(mz) > 0) player.group.rotation.y = Math.atan2(mx, -mz);
+  if (length > .02) player.group.rotation.y = Math.atan2(mx, -mz);
 
   const previousY = player.pos.y;
   if (jumpQueued && player.grounded) {
@@ -350,6 +355,9 @@ function resize() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8)); renderer.setSize(innerWidth, innerHeight);
 }
 addEventListener('resize', resize);
-addEventListener('blur', () => { keys.clear(); jumpQueued = false; });
+addEventListener('blur', () => {
+  keys.clear(); jumpQueued = false; joystickPointer = null; joystickInput.x = 0; joystickInput.z = 0;
+  joystickKnob.style.transform = 'translate(0, 0)';
+});
 updateHud(); updatePlayerCount(); updateCamera(1); requestAnimationFrame(animate);
 
