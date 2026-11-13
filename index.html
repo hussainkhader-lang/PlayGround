@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101326" />
+  <title>SKYBOUND — The ID is watching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="game" aria-label="3D Skybound platform game"></canvas>
+    <div class="grain"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Skybound home"><span class="brand-mark">S</span><span>SKY<span class="brand-light">BOUND</span></span></a>
+      <div class="live-pill"><i></i> LIVE WORLD <span id="player-count">1</span></div>
+      <div class="top-actions"><button class="icon-btn" id="sound-btn" title="Toggle sound">♫</button><button class="icon-btn" id="help-btn" title="How to play">?</button><div class="avatar-mini">Y</div></div>
+    </header>
+    <section class="mission-card">
+      <div class="eyebrow"><span class="sparkle">✦</span> RUN 01 <span class="eyebrow-line"></span> THE CLOUDLINE</div>
+      <h1>Keep moving.<br><span>Don't look back.</span></h1>
+      <p>The ID is loose in the sky. Reach the beacon before it reaches you.</p>
+      <div class="progress-row"><span>BEACON DISTANCE</span><strong id="distance">0 m</strong></div>
+      <div class="progress-track"><i id="progress-fill"></i><b></b></div>
+      <div class="objective"><span class="objective-icon">✧</span><span><b>Collect stardust</b><small id="star-count">0 / 8 found</small></span><span class="objective-arrow">↗</span></div>
+    </section>
+    <section class="session-card">
+      <div class="session-head"><span class="online-dot"></span><span id="session-label">SOLO SESSION</span><button id="copy-room" aria-label="Copy room code">⧉</button></div>
+      <div class="room-row"><span>ROOM</span><strong id="room-code">SKY-01</strong><span class="room-status" id="room-status">LOCAL</span></div>
+      <div class="session-buttons"><button id="host-btn">HOST</button><button id="join-btn">JOIN</button></div>
+    </section>
+    <aside class="right-rail"><div class="rail-label">WIND LEVEL</div><div class="wind-meter"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="wind-value">N<span>NE</span></div><div class="rail-divider"></div><div class="beacon-chip"><span>✦</span><b>08</b><small>STARDUST</small></div></aside>
+    <div class="danger-banner" id="danger-banner"><span class="danger-icon">◉</span><div><b>IT SEES YOU</b><small>Keep moving!</small></div><div class="danger-pulse"></div></div>
+    <div class="toast" id="toast"></div>
+    <div class="controls-hint"><span class="keycap">W</span><span class="keycap-row"><span class="keycap">A</span><span class="keycap">S</span><span class="keycap">D</span></span><span class="hint-text">MOVE</span><span class="hint-divider"></span><span class="keycap wide">SPACE</span><span class="hint-text">JUMP</span></div>
+    <div class="touch-controls" aria-label="Touch controls"><div class="dpad"><button data-key="w">▲</button><div><button data-key="a">◀</button><button data-key="s">▼</button><button data-key="d">▶</button></div></div><button class="jump-touch" data-key="space">JUMP <span>↗</span></button></div>
+    <div class="join-modal" id="join-modal" aria-hidden="true"><div class="modal-card"><button class="modal-close" id="modal-close">×</button><span class="modal-icon">✦</span><div class="eyebrow">BRING YOUR CREW</div><h2>Same sky.<br><span>More chances.</span></h2><p>Host a world for your friends, or enter their room code to jump in. Everyone spawns right into the run.</p><label for="room-input">ROOM CODE</label><div class="input-row"><input id="room-input" maxlength="12" value="SKY-01" autocomplete="off"/><button id="connect-btn">JOIN WORLD <span>↗</span></button></div><small class="modal-note">Multiplayer uses a peer-to-peer connection. Share your room code.</small></div></div>
+    <div class="help-modal" id="help-modal" aria-hidden="true"><div class="modal-card help-card"><button class="modal-close" id="help-close">×</button><span class="modal-icon">⌁</span><div class="eyebrow">FIELD NOTES</div><h2>Make it to<br><span>the other side.</span></h2><ul><li><b>Move</b><span>WASD or arrow keys</span></li><li><b>Jump</b><span>Space, W, or tap JUMP</span></li><li><b>Stardust</b><span>Collect the glowing stars on your way</span></li><li><b>The ID</b><span>It ignores walls. It does not ignore you.</span></li></ul><button class="got-it" id="got-it">GOT IT <span>↗</span></button></div></div>
+    <div class="status-message" id="status-message" aria-live="polite"></div>
+  </main>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
